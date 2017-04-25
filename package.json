@@ -17,4 +17,7 @@
     "build": "webpack --config webpack.conf.js",
   },
   "license": "MIT",
+  "devDependencies": {
+    "uglifyjs-webpack-plugin": "^0.4.3",
+  }
 }

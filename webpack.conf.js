@@ -1,9 +1,11 @@
 var path = require('path');
+var outputPath = path.join(__dirname, "build");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: "./app.js",
   output: {
+    path: outputPath,
     filename: 'quill.js',
     library: 'Quill',
     libraryTarget: 'umd',
@@ -52,8 +54,7 @@ module.exports = {
     new UglifyJSPlugin()
   ],
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    compress: true,
+    contentBase: outputPath,
     port: 8080,
   }
 }

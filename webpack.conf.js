@@ -1,15 +1,22 @@
 var path = require('path');
 var outputPath = path.join(__dirname, "build");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
+// Plugins
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 module.exports = {
-  entry: "./app.js",
+  entry: {
+    'mobileditor.js': ['./app.js'],
+    'mobileditor.cobble': ['./assets/cobble.styl'],
+  },
   output: {
     path: outputPath,
-    filename: 'quill.js',
+    filename: '[name]',
     library: 'Quill',
     libraryTarget: 'umd',
-    path: path.join(__dirname, "dist"),
   },
   resolve: {
     alias: {
@@ -20,14 +27,6 @@ module.exports = {
   },
   module: {
     rules: [{
-      test: /\.js$/,
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          presets: ['es2015']
-        }
-      }],
-    }, {
       test: /\.ts$/,
       use: [{
         loader: 'ts-loader',
@@ -41,6 +40,23 @@ module.exports = {
         }
       }]
     }, {
+      test: /\.styl$/,
+      include: [
+        path.resolve(__dirname, 'assets'),
+      ],
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: [
+          'css-loader',
+          {
+            loader: 'stylus-loader',
+            options: {
+              paths: 'node_modules/quill/assets',
+            },
+          },
+        ]
+      })
+    }, {
       test: /\.svg$/,
       use: [{
         loader: 'html-loader',
@@ -48,13 +64,28 @@ module.exports = {
           minimize: true
         }
       }]
+    }, {
+      test: /\.js$/,
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015']
+        }
+      }],
     }]
   },
   plugins: [
-    new UglifyJSPlugin()
+    new UglifyJSPlugin(),
+    new ExtractTextPlugin({
+      filename: '[name].css',
+      allChunks: true,
+    }),
+    new CopyWebpackPlugin([{from: path.resolve(__dirname, 'examples')}]),
   ],
   devServer: {
     contentBase: outputPath,
     port: 8080,
+    hot: false,
+    stats: 'minimal'
   }
 }

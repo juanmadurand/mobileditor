@@ -1,0 +1,42 @@
+themeName = 'cobble'
+activeColor = #06c
+borderColor = #ccc
+backgroundColor = #fff
+inactiveColor = #444
+shadowColor = #ddd
+textColor = #444
+
+@import './core'
+@import './base'
+
+.ql-cobble
+  a
+    color: activeColor
+
+  &.ql-toolbar
+    border: solid borderColor
+    border-width: 1px 0
+
+  [data-placeholder]
+    &.empty
+      position: relative
+      &:before
+        position:absolute
+        left:0
+        right:0
+        content:attr(data-placeholder)
+        color:rgba(0,0,0,.44)
+        font-weight:400
+        white-space:nowrap
+        text-overflow:ellipsis
+        overflow:hidden
+        pointer-events:none
+  h1[data-placeholder]:before
+    color:rgba(255,0,0,.75)
+
+  .ql-blockTitle
+    min-height: 36px
+  .ql-blockImage
+    &.uploading
+      opacity: .2
+

@@ -11,8 +11,8 @@ import Picker from 'quill/ui/picker';
 import ColorPicker from 'quill/ui/color-picker';
 import IconPicker from 'quill/ui/icon-picker';
 import Tooltip from 'quill/ui/tooltip';
+import CobbleTheme from './themes/cobble';
 
-import SnowTheme from 'quill/themes/snow';
 
 
 Quill.register({
@@ -20,9 +20,9 @@ Quill.register({
   'formats/link': Link,
   'formats/image': Image,
 
+    'themes/cobble': CobbleTheme,
   'modules/toolbar': Toolbar,
 
-  'themes/snow': SnowTheme,
 }, true);
 
 

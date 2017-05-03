@@ -140,7 +140,7 @@ class CobbleTooltip extends Tooltip {
 
     position(reference) {
         let left = reference.left + reference.width;
-        let top = reference.bottom;
+        let top = reference.bottom + this.quill.root.scrollTop;
         this.root.style.left = left + 'px';
         this.root.style.top = top + 'px';
     }

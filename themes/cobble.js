@@ -1,12 +1,12 @@
-import BaseTheme from 'quill/themes/base';
-import icons from 'quill/ui/icons';
 import extend from 'extend';
 import Delta from 'quill-delta';
+import Parchment from 'parchment';
 import Emitter from 'quill/core/emitter';
 import Keyboard from 'quill/modules/keyboard';
-import { BlockEmbed } from 'quill/blots/block';
+import BaseTheme from 'quill/themes/base';
 import BlockImage from '../formats/blockImage';
-import Parchment from 'parchment';
+import icons from '../assets/icons';
+import Tooltip from 'quill/ui/tooltip';
 
 class CobbleTheme extends BaseTheme {
     constructor(quill, options) {
@@ -21,13 +21,14 @@ class CobbleTheme extends BaseTheme {
             let image = Parchment.find(node);
 
             if (image instanceof BlockImage) {
-            this.quill.setSelection(image.offset(this.quill.scroll), 1, 'user');
+                this.quill.setSelection(image.offset(this.quill.scroll), 1, 'user');
             }
         });
     }
 
     extendToolbar(toolbar) {
-        toolbar.container.classList.add('ql-cobble');
+        this.tooltip = new CobbleTooltip(this.quill, this.options.bounds);
+        this.tooltip.root.appendChild(toolbar.container);
         this.buildButtons([].slice.call(toolbar.container.querySelectorAll('button')), icons);
         this.buildPickers([].slice.call(toolbar.container.querySelectorAll('select')), icons);
     }
@@ -88,4 +89,57 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
     }
 });
 
-export default CobbleTheme;
+class CobbleTooltip extends Tooltip {
+    constructor(quill, bounds) {
+        super(quill, bounds);
+        this.listen();
+        this.quill.on(Emitter.events.EDITOR_CHANGE, (type, ...args) => {
+            if (type !== Emitter.events.SELECTION_CHANGE) return;
+
+            const [range, oldRange, source] = args;
+            if (range == null) {
+                return;
+            }
+
+            let [line, linePosition] = this.quill.getLine(range.index);
+            if (line && linePosition === 0) {
+                this.show();
+
+                this.root.style.left = '0px';
+                this.root.style.width = '';
+                this.root.style.width = this.root.offsetWidth + 'px';
+                this.position(this.quill.getBounds(range));
+            } else if (document.activeElement !== this.textbox && this.quill.hasFocus()) {
+                this.hide();
+            }
+        });
+    }
+
+    listen() {
+      this.quill.on(Emitter.events.SCROLL_OPTIMIZE, () => {
+        // Let selection be restored by toolbar handlers before repositioning
+        setTimeout(() => {
+          if (this.root.classList.contains('ql-hidden')) return;
+          let range = this.quill.getSelection();
+          if (range != null) {
+            this.position(this.quill.getBounds(range));
+          }
+        }, 1);
+      });
+    }
+
+    position(reference) {
+        let left = reference.left + reference.width;
+        let top = reference.bottom;
+        this.root.style.left = left + 'px';
+        this.root.style.top = top + 'px';
+    }
+}
+CobbleTooltip.TEMPLATE = [
+'<div class="ql-tooltip-editor">',
+'<a class="ql-close"></a>',
+'</div>'
+].join('');
+
+
+export { CobbleTooltip, CobbleTheme as default };

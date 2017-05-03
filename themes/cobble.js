@@ -51,19 +51,24 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                                 let reader = new FileReader();
                                 reader.onload = (e) => {
                                     const range = this.quill.getSelection(true);
-                                    const thisQuill = this.quill;
+                                    const that = this;
                                     const uploadImage = this.options.handlers.uploadImage;
                                     if (typeof uploadImage === 'function') {
-                                        thisQuill.insertEmbed(range.index, 'blockImage', {image: e.target.result, uploading: true}, Emitter.sources.SILENT);
+                                        that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: true}, Emitter.sources.SILENT);
                                         uploadImage(fileInput.files, function(image) {
-                                            thisQuill.updateContents(new Delta()
-                                                .retain(range.index)
-                                                .delete(1)
-                                                , Emitter.sources.USER);
-                                            thisQuill.insertEmbed(range.index, 'blockImage', {image: image.url, uploading: false}, Emitter.sources.USER);
+                                            that.quill.updateContents(
+                                              new Delta()
+                                                .retain(range.index).delete(1)
+                                                .insert({blockImage: {
+                                                  image: {
+                                                    url: image.url,
+                                                  },
+                                                  uploading: false,
+                                                }}
+                                            ), Emitter.sources.USER);
                                         });
                                     } else {
-                                        thisQuill.insertEmbed(range.index, 'blockImage', {image: e.target.result, uploading: false}, Emitter.sources.USER);
+                                        that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: false}, Emitter.sources.USER);
                                     }
                                     fileInput.value = "";
                                 }
@@ -118,14 +123,19 @@ class CobbleTooltip extends Tooltip {
     listen() {
       this.quill.on(Emitter.events.SCROLL_OPTIMIZE, () => {
         // Let selection be restored by toolbar handlers before repositioning
-        setTimeout(() => {
-          if (this.root.classList.contains('ql-hidden')) return;
-          let range = this.quill.getSelection();
-          if (range != null) {
-            this.position(this.quill.getBounds(range));
-          }
-        }, 1);
+        this.update();
       });
+    }
+
+    update() {
+      clearTimeout(window.tooltipTimer);
+      window.tooltipTimer = setTimeout(() => {
+        if (this.root.classList.contains('ql-hidden')) return;
+        let range = this.quill.getSelection();
+        if (range != null) {
+          this.position(this.quill.getBounds(range));
+        }
+      }, 100);
     }
 
     position(reference) {

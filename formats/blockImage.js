@@ -20,9 +20,12 @@ class BlockImage extends BlockEmbed {
         };
     }
 
-    static getImgNode(imageUrl) {
+    static getImgNode({url, onload}) {
         var image = document.createElement("img");
-        image.setAttribute("src", imageUrl);
+        image.setAttribute("src", url);
+        image.onload = function() {
+          typeof onload === 'function' && onload();
+        }
         return image;
     }
 }

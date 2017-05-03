@@ -5,6 +5,7 @@ var outputPath = path.join(__dirname, "build");
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 
 module.exports = {
@@ -81,6 +82,7 @@ module.exports = {
       allChunks: true,
     }),
     new CopyWebpackPlugin([{from: path.resolve(__dirname, 'examples')}]),
+    new OptimizeCssAssetsPlugin({cssProcessorOptions: { discardComments: {removeAll: true } }}),
   ],
   devServer: {
     contentBase: outputPath,

@@ -12,7 +12,6 @@ textColor = #444
 .ql-cobble
   a
     color: activeColor
-
   &.ql-container
     font-size: 16px
   .ql-editor
@@ -52,6 +51,14 @@ textColor = #444
     z-index: 1
     &.uploading
       opacity: .2
+    .ql-close-img
+      position: absolute
+      top: 1vh
+      right: 1vw
+      @extend .ql-cobble .ql-toolbar button
+      padding: 0
+      svg path
+        fill: #fff
 
   .ql-tooltip
     background-color: transparent

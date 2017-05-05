@@ -12,18 +12,6 @@ class CobbleTheme extends BaseTheme {
     constructor(quill, options) {
         super(quill, options);
         this.quill.container.classList.add('ql-cobble');
-
-        this.quill.root.addEventListener('click', (ev) => { // Select block
-            let node = ev.target;
-            if (ev.target.tagName === 'IMG') {
-                node = node.parentElement;
-            }
-            let image = Parchment.find(node);
-
-            if (image instanceof BlockImage) {
-                this.quill.setSelection(image.offset(this.quill.scroll), 1, 'user');
-            }
-        });
     }
 
     extendToolbar(toolbar) {

@@ -1,4 +1,5 @@
 import Block, {BlockEmbed} from 'quill/blots/block';
+import icons from '../assets/icons';
 
 class BlockImage extends BlockEmbed {
     static create(data) {
@@ -6,6 +7,7 @@ class BlockImage extends BlockEmbed {
         node.classList.toggle('uploading', data.uploading === true);
         if (data.image) {
             node.appendChild(this.getImgNode(data.image));
+            node.appendChild(this.getCloseBtn());
         }
         return node;
     }
@@ -21,12 +23,22 @@ class BlockImage extends BlockEmbed {
     }
 
     static getImgNode({url, onload}) {
-        var image = document.createElement("img");
+        const image = document.createElement("img");
         image.setAttribute("src", url);
         image.onload = function() {
           typeof onload === 'function' && onload();
         }
         return image;
+    }
+
+    static getCloseBtn() {
+        const button = document.createElement("button");
+        button.classList.add('ql-close-img');
+        button.onclick = function() {
+            this.parentElement.remove();
+        }
+        button.innerHTML = icons.close;
+        return button;
     }
 }
 

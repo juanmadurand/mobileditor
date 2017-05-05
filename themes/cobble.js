@@ -43,17 +43,24 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                                     const uploadImage = this.options.handlers.uploadImage;
                                     if (typeof uploadImage === 'function') {
                                         that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: true}, Emitter.sources.SILENT);
-                                        uploadImage(fileInput.files, function(image) {
-                                            that.quill.updateContents(
-                                              new Delta()
-                                                .retain(range.index).delete(1)
-                                                .insert({blockImage: {
-                                                  image: {
-                                                    url: image.url,
-                                                  },
-                                                  uploading: false,
-                                                }}
-                                            ), Emitter.sources.USER);
+                                        uploadImage(fileInput.files, {
+                                            start: function() {},
+                                            progress: function(value) {
+                                                let [blockImage, ] = that.quill.getLine(range.index);
+                                                blockImage.progress(value);
+                                            },
+                                            success: function(image) {
+                                                that.quill.updateContents(
+                                                  new Delta()
+                                                    .retain(range.index).delete(1)
+                                                    .insert({blockImage: {
+                                                      image: {
+                                                        url: image.url,
+                                                      },
+                                                      uploading: false,
+                                                    }}
+                                                ), Emitter.sources.USER);
+                                            },
                                         });
                                     } else {
                                         that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: false}, Emitter.sources.USER);

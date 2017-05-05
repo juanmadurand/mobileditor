@@ -8,6 +8,7 @@ class BlockImage extends BlockEmbed {
         if (data.image) {
             node.appendChild(this.getImgNode(data.image));
             node.appendChild(this.getCloseBtn());
+            node.appendChild(this.getProgressBar());
         }
         return node;
     }
@@ -39,6 +40,23 @@ class BlockImage extends BlockEmbed {
         }
         button.innerHTML = icons.close;
         return button;
+    }
+
+    static getProgressBar() {
+        const domProgress = document.createElement("div");
+        const domProgressBar = document.createElement("div");
+
+        domProgress.classList.add("file_progress");
+        domProgressBar.classList.add("file_progress_bar");
+
+        domProgress.appendChild(domProgressBar);
+
+        return domProgress;
+    }
+
+    progress(percentage) {
+        const progressBar = this.domNode.querySelector('.file_progress_bar')
+        progressBar.style.width = percentage + "%";
     }
 }
 

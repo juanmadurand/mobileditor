@@ -50,7 +50,27 @@ textColor = #444
     position: relative
     z-index: 1
     &.uploading
-      opacity: .2
+      img
+        opacity: .2
+      .file_progress
+        visibility: visible
+        opacity: 1
+    .file_progress
+      position: absolute
+      z-index: 1
+      bottom: 0
+      left: 0
+      right: 0
+      padding: 3px
+      background-color: #eee
+      transition: opacity .15s ease
+      visibility: hidden
+      opacity: 0
+      &_bar
+        height: 2px
+        background-color: #333
+        transition: width .1s linear
+        width: 0
     .ql-close-img
       position: absolute
       top: 1vh

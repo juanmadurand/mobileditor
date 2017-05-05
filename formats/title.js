@@ -1,4 +1,5 @@
 import Block from 'quill/blots/block';
+import Parchment from 'parchment';
 
 class TitleBlot extends Block {
     static create(value) {
@@ -12,7 +13,14 @@ class TitleBlot extends Block {
         return node;
     }
 
-    insertAt(index, value, def) { // overrides parent
+    insertAt(index, value, def) {
+      if (typeof value === 'string' && value.endsWith('\n')) {
+        let block = Parchment.create(Block.blotName);
+        this.parent.insertBefore(block, index === 0 ? this : this.next);
+        block.insertAt(0, value.slice(0, -1));
+      } else {
+        super.insertAt(index, value, def);
+      }
     }
 }
 TitleBlot.blotName = 'blockTitle';

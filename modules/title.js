@@ -23,11 +23,11 @@ class Title extends Module {
     checkRequiredTitle() {
         let lines = this.quill.scroll.lines();
         let first = lines[0];
-        if (first instanceof Block) {
+        if (!(first instanceof TitleBlot)) {
             this.quill.insertEmbed(0, 'blockTitle', '', Quill.sources.SILENT);
         }
         if (lines.length === 1) {
-            this.quill.updateContents(new Delta().retain(1).insert({block: 'a'}));
+            this.quill.updateContents(new Delta().retain(1).insert({block: ''}));
         }
     }
 

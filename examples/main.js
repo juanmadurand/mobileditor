@@ -7,10 +7,11 @@ var quill = new Quill('#editor-container', {
 				uploadImage: function(image, success){ }
 			} */
 		},
+
 		title: {
 			placeholder: {
-				title: 'Titulo',
-				body: 'Ingresa texto...',
+				title: 'Title',
+				body: 'Write something...',
 			}
 		},
 	},

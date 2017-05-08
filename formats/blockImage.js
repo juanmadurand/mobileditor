@@ -7,7 +7,7 @@ class BlockImage extends BlockEmbed {
         node.classList.toggle('uploading', data.uploading === true);
         if (data.image) {
             node.appendChild(this.getImgNode(data.image));
-            node.appendChild(this.getCloseBtn());
+            node.appendChild(this.getCloseBtn(data.cancelUpload));
             node.appendChild(this.getProgressBar());
         }
         return node;
@@ -32,10 +32,11 @@ class BlockImage extends BlockEmbed {
         return image;
     }
 
-    static getCloseBtn() {
+    static getCloseBtn(cancelUpload) {
         const button = document.createElement("button");
         button.classList.add('ql-close-img');
         button.onclick = function() {
+            typeof cancelUpload === 'function' && cancelUpload();
             this.parentElement.remove();
         }
         button.innerHTML = icons.close;

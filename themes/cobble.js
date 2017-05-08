@@ -42,7 +42,11 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                                     const that = this;
                                     const uploadImage = this.options.handlers.uploadImage;
                                     if (typeof uploadImage === 'function') {
-                                        that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: true}, Emitter.sources.SILENT);
+                                        that.quill.insertEmbed(range.index, 'blockImage', {
+                                          image: {url: e.target.result},
+                                          uploading: true,
+                                          cancelUpload: this.options.handlers.cancelUpload,
+                                        }, Emitter.sources.SILENT);
                                         uploadImage(fileInput.files, {
                                             start: function() {},
                                             progress: function(value) {

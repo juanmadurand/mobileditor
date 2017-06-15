@@ -32,47 +32,59 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                     if (fileInput == null) {
                         fileInput = document.createElement('input');
                         fileInput.setAttribute('type', 'file');
+                        fileInput.setAttribute('multiple', 'multiple');
                         fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
                         fileInput.classList.add('ql-image');
                         fileInput.addEventListener('change', () => {
-                            if (fileInput.files != null && fileInput.files[0] != null) {
-                                let reader = new FileReader();
-                                reader.onload = (e) => {
-                                    const range = this.quill.getSelection(true);
-                                    const that = this;
-                                    const uploadImage = this.options.handlers.uploadImage;
-                                    if (typeof uploadImage === 'function') {
-                                        that.quill.insertEmbed(range.index, 'blockImage', {
-                                          image: {url: e.target.result},
-                                          uploading: true,
-                                          cancelUpload: this.options.handlers.cancelUpload,
-                                        }, Emitter.sources.SILENT);
-                                        uploadImage(fileInput.files, {
-                                            start: function() {},
-                                            progress: function(value) {
-                                                let [blockImage, ] = that.quill.getLine(range.index);
-                                                blockImage.progress(value);
-                                            },
-                                            success: function(image) {
-                                                that.quill.updateContents(
-                                                  new Delta()
-                                                    .retain(range.index).delete(1)
-                                                    .insert({blockImage: {
-                                                      image: {
-                                                        url: image.url,
-                                                      },
-                                                      uploading: false,
-                                                    }}
-                                                ), Emitter.sources.USER);
-                                            },
-                                        });
-                                    } else {
-                                        that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: false}, Emitter.sources.USER);
-                                    }
+                            if (fileInput.files == null || fileInput.files.length === 0) {
+                                return;
+                            }
+
+                            const files = [...fileInput.files];
+                            let reader = new FileReader();
+                            reader.onload = (e) => {
+                                const range = this.quill.getSelection(true);
+                                const that = this;
+                                const uploadImage = this.options.handlers.uploadImage;
+                                if (typeof uploadImage === 'function') {
+                                    that.quill.insertEmbed(range.index, 'blockImage', {
+                                      image: {url: e.target.result},
+                                      uploading: true,
+                                      cancelUpload: this.options.handlers.cancelUpload,
+                                    }, Emitter.sources.SILENT);
+                                    uploadImage([reader.currentFile], {
+                                        start: function() {},
+                                        progress: function(value) {
+                                            let [blockImage, ] = that.quill.getLine(range.index);
+                                            blockImage.progress(value);
+                                        },
+                                        success: function(image) {
+                                            that.quill.updateContents(
+                                              new Delta()
+                                                .retain(range.index).delete(1)
+                                                .insert({blockImage: {
+                                                  image: {
+                                                    url: image.url,
+                                                  },
+                                                  uploading: false,
+                                                }}
+                                            ), Emitter.sources.USER);
+                                        },
+                                    });
+                                } else {
+                                    that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: false}, Emitter.sources.USER);
+                                }
+
+                                // Handle files
+                                if (files.length > 0) {
+                                    reader.currentFile = files.shift();
+                                    reader.readAsDataURL(reader.currentFile);
+                                } else {
                                     fileInput.value = "";
                                 }
-                                reader.readAsDataURL(fileInput.files[0]);
                             }
+                            reader.currentFile = files.shift();
+                            reader.readAsDataURL(reader.currentFile);
                         });
                         this.container.appendChild(fileInput);
                     }

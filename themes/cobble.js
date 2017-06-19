@@ -33,7 +33,7 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                         fileInput = document.createElement('input');
                         fileInput.setAttribute('type', 'file');
                         fileInput.setAttribute('multiple', 'multiple');
-                        fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
+                        fileInput.setAttribute('accept', 'image/*');
                         fileInput.classList.add('ql-image');
                         fileInput.addEventListener('change', () => {
                             if (fileInput.files == null || fileInput.files.length === 0) {

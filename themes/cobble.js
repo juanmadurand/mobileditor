@@ -48,7 +48,7 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                                 const uploadImage = this.options.handlers.uploadImage;
                                 if (typeof uploadImage === 'function') {
                                     that.quill.insertEmbed(range.index, 'blockImage', {
-                                      image: {url: e.target.result},
+                                      image: e.target.result,
                                       uploading: true,
                                       cancelUpload: this.options.handlers.cancelUpload,
                                     }, Emitter.sources.SILENT);
@@ -63,16 +63,14 @@ CobbleTheme.DEFAULTS = extend(true, {}, CobbleTheme.DEFAULTS, {
                                               new Delta()
                                                 .retain(range.index).delete(1)
                                                 .insert({blockImage: {
-                                                  image: {
-                                                    url: image.url,
-                                                  },
+                                                  image: image.url,
                                                   uploading: false,
                                                 }}
                                             ), Emitter.sources.USER);
                                         },
                                     });
                                 } else {
-                                    that.quill.insertEmbed(range.index, 'blockImage', {image: {url: e.target.result}, uploading: false}, Emitter.sources.USER);
+                                    that.quill.insertEmbed(range.index, 'blockImage', {image: e.target.result, uploading: false}, Emitter.sources.USER);
                                 }
 
                                 // Handle files
